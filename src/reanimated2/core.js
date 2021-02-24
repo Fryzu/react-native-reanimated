@@ -3,10 +3,24 @@
 import NativeReanimated from './NativeReanimated';
 import { Platform } from 'react-native';
 import { addWhitelistedNativeProps } from '../ConfigHelper';
+import Constants from './env-constants/constants';
 
 global.__reanimatedWorkletInit = function(worklet) {
   worklet.__worklet = true;
 };
+
+// Make sure the expo client native reanimated version matches the version in the package.json
+if (
+  /* TODO: I need to check semantic version correctness not exact same strings */
+  Constants.EXPO_NATIVE_REANIMATED_VERSION &&
+  Constants.EXPO_NATIVE_REANIMATED_VERSION !== Constants.REANIMATED_JS_VERSION
+) {
+  console.warn('Constants', Constants);
+
+  throw new Error(
+    'Please make sure that the reanimated version in your package.json is compatible with your expo client. Use `expo install react-native-reanimated` in order to properly install reanimated.'
+  );
+}
 
 // check if a worklet can be created successfully(in order to detect a lack of babel plugin)
 if (
